@@ -2329,6 +2329,27 @@ class ParseQueryTest extends \PHPUnit_Framework_TestCase
         $query->_setConditions('not-an-array');
     }
 
+    public function testEqualToOnSubObject()
+    {
+        $mother = new ParseObject('Person');
+        $mother->set('name', 'Jane');
+        $mother->save();
+
+        $daughter = new ParseObject('Person');
+        $daughter->set('name', 'Mary');
+        $daughter->save();
+
+        $mother->set('daughter', $daughter);
+        $mother->save();
+
+        $daughterQuery = new ParseQuery('Person');
+        $daughterQuery->includeKey('daughter');
+        $daughterQuery->equalTo('daughter.name', 'Mary');
+
+        $found = $daughterQuery->find();
+        $this->assertEquals($found->length, 1);
+    }
+
     /**
      * @group query-set-conditions
      */
@@ -2338,7 +2359,7 @@ class ParseQueryTest extends \PHPUnit_Framework_TestCase
             '\Parse\ParseException',
             'Unknown condition to set'
         );
-        
+
         $query = new ParseQuery('TestObject');
         $query->_setConditions([
             'unrecognized'  => 1
