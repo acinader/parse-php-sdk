@@ -51,9 +51,7 @@ class ParseUser extends ParseObject
      */
     public function setUsername($username)
     {
-        if ($this->has('authData.anonymous')) {
-            $this->set('authData.anonymous', null);
-        }
+        $this->set('authData.anonymous', null);
         return $this->set('username', $username);
     }
 
